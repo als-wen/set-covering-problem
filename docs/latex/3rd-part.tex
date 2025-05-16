@@ -1,0 +1,123 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{caption}
+
+\geometry{margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Set Covering Problem}
+\lhead{Optimization Problem}
+\rfoot{\thepage}
+
+\title{Set Covering Problem\\\large PIA: Part III}
+\author{Operations Research, 032\\\large Team 6: Alan Alejandro Vargas González, 2086183}
+\date{\ May, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Part III: Testing and Optimization}
+
+\subsection{Test Cases}
+To evaluate the performance of my solver, I selected instances of varying sizes from the OR-Library:
+
+\begin{itemize}
+    \item \textbf{Small Instances}:
+    \begin{itemize}
+        \item \texttt{scp41.txt} (200 rows, 1000 columns)
+        \item \texttt{scp51.txt} (200 rows, 2000 columns)
+    \end{itemize}
+    
+    \item \textbf{Medium Instances}:
+    \begin{itemize}
+        \item \texttt{scpa1.txt} (300 rows, 3000 columns)
+        \item \texttt{scpb1.txt} (300 rows, 3000 columns)
+    \end{itemize}
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\label{tab:results}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Instance} & \textbf{Subsets} & \textbf{Cost} & \textbf{Time (s)} & \textbf{Optimal?} \\ \hline
+\texttt{scp41.txt} & 65 & 429.0 & 0.3435 & Yes \cite{beasley1987} \\ \hline
+\texttt{scp51.txt} & 62 & 253.0 & 0.6362 & Likely \\ \hline
+\texttt{scpa1.txt} & 67 & 253.0 & 1.5724 & Likely \\ \hline
+\texttt{scpb1.txt} & 37 & 69.0 & 2.7163 & Yes \cite{beasley1987} \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Adjustments and Optimization}
+No algorithmic improvements were made. I just created \texttt{results.py} to automatically generate a \texttt{csv} file with test results.
+
+\begin{verbatim}
+import os
+import pandas as pd
+from set_covering_problem import read, validation, solving
+
+files = ["scp41.txt", "scp51.txt", "scpa1.txt", "scpb1.txt"]
+directory = "data/pia-3rd/"
+results = []
+
+for file in files:
+    file_path = os.path.join(directory, file)
+    m, n, costs, cov = read(file_path)
+    validation(m, n, costs, cov)
+    
+    sol, cost, amount_time = solving(m, n, costs, cov)
+    
+    results.append({
+        "Instance": file,
+        "Subsets": len(sol),
+        "Total cost": cost,
+        "Time": round(amount_time, 4)
+    })
+
+df = pd.DataFrame(results)
+df.to_csv("results/results_3rd.csv", index = False)
+print("Was saved successfully")
+\end{verbatim}
+
+\subsection{Result Analysis}
+
+\begin{itemize}
+    \item \textbf{Correctness}:
+    \begin{itemize}
+        \item All solutions matched known or expected optima
+        \item All constraints were satisfied in all test cases
+    \end{itemize}
+    
+    \item \textbf{Efficiency}:
+    \begin{itemize}
+        \item Sublinear time growth observed in small and medium instances
+        \item \texttt{scpb1.txt}'s higher runtime (2.7163s) suggests sensitivity to instance sparsity (subsets covering few rows)
+    \end{itemize}
+    
+    \item \textbf{Robustness}:
+    \begin{itemize}
+        \item No failures across selected sets (4, 5, A, B)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Documentation}
+Generated files for reproducibility:
+
+\begin{itemize}
+    \item \texttt{results.csv}: Instance-level metrics (cost, time, subsets)
+    \item \texttt{data/pia-3rd/}: Data folder used
+    \item \texttt{results/results\_3rd.csv/}: Output location
+\end{itemize}
+
+\begin{thebibliography}{9}
+\bibitem{beasley1987}
+Beasley, J. E. (1987). An algorithm for set covering problems. \textit{European Journal of Operational Research}, 31(1), 85-93.
+\end{thebibliography}
+
+\end{document}
