@@ -1,0 +1,105 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Set Covering Problem}
+\lhead{Optimization Problem}
+\rfoot{\thepage}
+
+\title{Set Covering Problem\\\large PIA: Part I}
+\author{Operations Research, 032\\\large Team 6: Alan Alejandro Vargas González, 2086183}
+\date{\ May, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Part I: Formulation and Planning}
+
+\subsection{Definition}
+The \textbf{Set Covering Problem (SCP)} consists in selecting a subset with minimum cost in a collection of subsets that are part of a universal set of elements. Each subset has certain elements, and the objective is to cover all elements with the minimum number of subsets.
+
+\subsection{Objectives}
+\begin{itemize}
+    \item Minimize the total cost of the subsets selected.
+    \item Include all elements of the universal set.
+\end{itemize}
+
+\subsection{Applications}
+This problem appears in multiple problems of Operations Research, such as:
+\begin{itemize}
+    \item Installation's location (hospitals, service stations, etc.).
+    \item Covering of resources.
+    \item Distribution and planning of routes.
+\end{itemize}
+
+\subsection{Model classification}
+\begin{itemize}
+    \item Type: Full Binary Linear Programming.
+    \item Why? Decision variables are binary, the objective function and restrictions are linear.   
+\end{itemize}
+
+\subsection{Model elements}
+\textbf{Parameters}:
+\begin{itemize}
+    \item $m$: number of elements.
+    \item $n$: number of subsets.
+    \item $c_j$: Cost of selecting subset $j$.
+    \item $a_{ij}$: binary matrix that indicates if the subset $j$ has the element $i$.
+\end{itemize}
+
+\textbf{Decision variables}:
+\[
+x_j = \begin{cases}
+1 & \text{if the $j$ subset is selected} \\
+0 & \text{it isn't selected}
+\end{cases}
+\]
+
+\textbf{Objective function}:
+\[
+\min \sum_{j=1}^{n} c_j x_j
+\]
+
+\textbf{Constraints}:
+\[
+\sum_{j=1}^{n} a_{ij} x_j \geq 1 \quad \forall i = 1, \dots, m
+\]
+
+\subsection{Initial Design for Implementation}
+\begin{itemize}
+    \item Programming language: Python
+    \item Libraries: \texttt{PuLP}, \texttt{pandas}, \texttt{matplotlib}
+    \item Code structure: data input, model definition, solution, and result visualization.
+\end{itemize}
+
+\subsection{Project Planning}
+\begin{longtable}{|c|p{8cm}|c|c|}
+\hline
+\textbf{Week} & \textbf{Activity} & \textbf{Tools} \\
+\hline
+1 & Formulation and Planning & Overleaf \\
+2 & Codification and Visualization & Python (PuLP) \\
+3 & Testing and Optimization & Python (Pandas) \\
+4 & Final Results & Python (matplotlib) \\
+5 & Presentation & Canva \\
+6 & Final report & GitHub, LaTeX \\
+\hline
+\end{longtable}
+
+\begin{thebibliography}{9}
+\bibitem{balas1972} 
+Balas, E., \& Padberg, M. W. (1972). On the Set-Covering Problem. 
+\textit{Operations Research}, 20(6), 1152–1161. 
+\url{http://dx.doi.org/10.1287/opre.20.6.1152}
+\end{thebibliography}
+
+\end{document}
