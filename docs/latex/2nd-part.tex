@@ -1,0 +1,121 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{caption}
+
+\geometry{margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Set Covering Problem}
+\lhead{Optimization Problem}
+\rfoot{\thepage}
+
+\title{Set Covering Problem\\\large PIA: Part II}
+\author{Operations Research, 032\\\large Team 6: Alan Alejandro Vargas González, 2086183}
+\date{\ May, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Part II: Codification and Visualization}
+
+\subsection{Model Codification}
+The model was implemented in Python using the \texttt{PuLP} library. The complete code is stored in the set-covering-repository. 
+
+\begin{verbatim}
+def solving(m, n, costs, cov):
+    prob = pulp.LpProblem("Set_Covering_Problem", pulp.LpMinimize)
+
+    x = [pulp.LpVariable(f"x_{j}", cat="Binary") for j in range(n)]
+
+    # Objective function
+    prob += pulp.lpSum([costs[j] * x[j] for j in range(n)])
+
+    # Constraints
+    for i in range(m):
+        prob += pulp.lpSum([x[j] for j in cov[i]]) >= 1
+
+    start = time.time()
+    prob.solve()
+    amount_time = time.time() - start
+
+    subset = [j for j in range(n) if pulp.value(x[j]) == 1]
+    total_cost = pulp.value(prob.objective)
+
+    return subset, total_cost, amount_time
+\end{verbatim}
+
+\subsection{Data Structures}
+The next data structures were used:
+\begin{itemize}
+    \item List \texttt{costs}: contains the cost of each subset.
+    \item List \texttt{coverage} lists: contains, for each element, the subsets that cover it.
+    \item Binary variable \texttt{x[j]}: is the \( j \) subset selected?
+\end{itemize}
+
+\subsection{Data Visualization}
+Validation of:
+\begin{itemize}
+    \item All the costs are positive.
+    \item Each row is cover by at least one subset.
+    \item There aren't indexes out of range.
+\end{itemize}
+
+\begin{verbatim}
+def validation(m, n, costs, cov):
+    assert len(costs) == n, "Length of costs don't match n"
+    assert len(cov) == m, "Length of coverage don't match m"
+    for c in costs:
+        assert c > 0, "Costs need to be positive"
+    for i in range(m):
+        assert len(cov[i]) > 0, f"Row {i} doesn't have coverage"
+        for col in cov[i]:
+            assert 0 <= col < n, f"Index out of range in coverage of row {i}"
+\end{verbatim}
+
+\subsection{Preliminary Analysis}
+
+Testing with small data, such as the \texttt{ scp's} instances, obtaining consistent results with known values. I created a small example to verify the correct functionality of the program:
+
+\begin{itemize}
+    \item \textbf{Elements:} 3  
+    \item \textbf{Subsets:} 4  
+    \item \textbf{Costs:} $[1, 2, 3, 4]$  
+    \item \textbf{Coverage:}  
+    \begin{itemize}
+        \item Row 0: covered by subsets $\{0, 1\}$  
+        \item Row 1: covered by subsets $\{1, 2\}$  
+        \item Row 2: covered by subsets $\{2, 3\}$  
+    \end{itemize}
+\end{itemize}
+
+\noindent
+\textbf{Results:}  
+\begin{itemize}
+    \item \textbf{Subsets selected:} $[0, 2]$  
+    \item \textbf{Total cost:} 4  
+    \item \textbf{Execution time:} 0.0784\,s  
+\end{itemize}
+
+\paragraph*{Why these subsets?}  
+\begin{itemize}
+    \item \textbf{Row 0} is covered by subsets \([0, 1]\) \(\rightarrow\) Covered by subset \(0\).
+    \item \textbf{Row 1} is covered by subsets \([1, 2]\) \(\rightarrow\) Covered by subset \(2\).
+    \item \textbf{Row 2} is covered by subsets \([2, 3]\) \(\rightarrow\) Covered by subset \(2\).
+\end{itemize}
+Therefore, the subsets \(0\) and \(2\) are enough to cover all rows.
+
+\paragraph*{Total cost}  
+The total cost is:
+\[
+\text{Total Cost} = \text{cost}[0] + \text{cost}[2] = 1 + 3 = 4.
+\]
+
+\paragraph*{Execution time}  
+The solver took \textbf{0.1287s} to find the optimal solution.
+
+\end{document}
