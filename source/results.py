@@ -2,8 +2,8 @@ import os
 import pandas as pd
 from set_covering_problem import read, validation, solving
 
-files = ["scp41.txt", "scp51.txt", "scpa1.txt", "scpb1.txt"]
-directory = "data/pia-3rd/"
+files = ["rail2536", "rail4284", "rail4872"]
+directory = "data/pia-4th/"
 results = []
 
 for file in files:
@@ -21,5 +21,5 @@ for file in files:
     })
 
 df = pd.DataFrame(results)
-df.to_csv("results/results_3rd.csv", index = False)
+df.to_csv("results/results_4th.csv", index = False)
 print("Was saved successfully")
